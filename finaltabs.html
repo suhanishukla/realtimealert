@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/b-1.7.1/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/b-1.7.1/datatables.min.js"></script>
+<!--<script src="realtimetables.js"></script>-->
+<!--<script src="jquery.js"></script>
+<script src="jquery.dataTables.js"></script>-->
+<!--<script src="dataTables.responsive.js"></script>-->
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"/>
+<!--<link rel="stylesheet" type="text/css" href="jquery.dataTables.css"/>-->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css"/>
+<!--<link rel="stylesheet" type="text/css" href="dataTables.responsive.css"/>-->
+<script src="https://smtpjs.com/v3/smtp.js"></script>
+<style>
+  @import url('//cdn.datatables.net/1.10.2/css/jquery.dataTables.css');
+  td.details-control {
+      background: url('http://www.datatables.net/examples/resources/details_open.png') no-repeat center center;
+      cursor: pointer;
+    }
+  tr.shown td.details-control {
+      background: url('http://www.datatables.net/examples/resources/details_close.png') no-repeat center center;
+    }
+  .dataTables_wrapper {
+      float: left;
+      width: 33%;
+      clear: none
+    }
+</style>
+
+<style>
+* {box-sizing: border-box}
+
+/* Set height of body and the document to 100% */
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial;
+}
+
+/* Style tab links */
+.tablink {
+  background-color: #4373c3;
+  color: white;
+  float: left;
+  border: 2px solid white;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 14px;
+  font-size: 18px;
+  width: 25%;
+  height: 70px;
+}
+
+.tablink:hover {
+  background-color: #5f7eb5;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+  color: black;
+  display: none;
+  padding: 100px 20px;
+  height: 100%;
+}
+
+#SystemInformation {background-color: white;}
+#ResiliencyMonitoring {background-color: white;}
+#DecisionSupport {background-color: white;}
+#RealTime {background-color: white;}
+</style>
+
+<script>
+function openPage(pageName,elmnt,color) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = "";
+  }
+  document.getElementById(pageName).style.display = "block";
+  elmnt.style.backgroundColor = color;
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+
+<script>
+function sendEmail() {
+  Email.send({
+    Host: "smtp.gmail.com",
+    Username: "checkalert987@gmail.com",
+    Password: "Minion123",
+    To: "suhanishukla05@gmail.com",
+    From: "checkalert987@gmail.com",
+    Subject: "<email subject>",
+    Body: "<email body>",
+  })
+  .then(function(message){
+    alert("Mail Sent Successfully!")
+  });
+}
+</script>
+
+<script>
+function format(value1, value2) {
+      return '<tr>'+
+      	'<td># of camels: </td>' +
+        '<td>'+value1 +'</td>'+
+      '</tr>'+
+      '<tr>'+
+      	'<td># of zebras: </td>'+
+        '<td>'+value2+'</td>'+
+       '</td>';
+  }
+  $(document).ready(function () {
+      var table = $('table.display').DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false
+      });
+
+      // Add event listener for opening and closing details
+      $('table.display').on('click', 'td.details-control', function () {
+          var tr = $(this).closest('tr');
+          var row = table.row(tr);
+
+          if (row.child.isShown()) {
+              // This row is already open - close it
+              row.child.hide();
+              tr.removeClass('shown');
+          } else {
+              // Open this row
+              row.child(format(tr.data('child-value-1'), tr.data('child-value-2'))).show();
+              tr.addClass('shown');
+          }
+      });
+  });
+</script>
+</head>
+
+<body>
+
+<button class="tablink" onclick="openPage('SystemInformation', this, '#264173')" id="defaultOpen"><strong>System Information</strong></button>
+<button class="tablink" onclick="openPage('ResiliencyMonitoring', this, '#264173')"><strong>Resiliency Monitoring</strong></button>
+<button class="tablink" onclick="openPage('DecisionSupport', this, '#264173')"><strong>Decision Support</strong></button>
+<button class="tablink" onclick="openPage('RealTime', this, '#264173')"><strong>Real-time Alert and Monitoring of Service Area</strong></button>
+
+<div id="SystemInformation" class="tabcontent">
+  <h1>System Information</h1>
+</div>
+
+<div id="ResiliencyMonitoring" class="tabcontent">
+  <h1>Resiliency Monitoring</h1>
+</div>
+
+<div id="DecisionSupport" class="tabcontent">
+  <h1>Decision Support</h1>
+</div>
+
+<div id="RealTime" class="tabcontent">
+  <h1>Real-time Alert and Monitoring of Service Area</h1>
+  <!--Alert Operator Table-->
+  <table id="" class="display" cellspacing="0" width="33%">
+      <thead>
+          <tr>
+              <th></th>
+              <th>Alert Operator</th>
+              <th></th>
+              <th></th>
+              <th></th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>System Info</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="10 camels" data-child-value-2="8 zebras">
+              <td class="details-control"></td>
+              <td>Outage Zone</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="80 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>Customers Affected</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="12 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>Damage Info</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+      </tbody>
+  </table>
+  <!--Alert Field Crew-->
+  <table id="" class="display" cellspacing="0" width="33%">
+      <thead>
+          <tr>
+              <th></th>
+              <th>Alert Field Crew</th>
+              <th></th>
+              <th></th>
+              <th></th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>Outage Zone</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="10 camels" data-child-value-2="8 zebras">
+              <td class="details-control"></td>
+              <td>Customers Affected</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="80 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>Damage Information</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="12 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>Crew Routing</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+      </tbody>
+      <tfoot>
+        <th colspan="5"><button class="sms"><a href="sms:+1-408-464-4800">Send SMS</a></button></th>
+      </tfoot>
+  </table>
+
+  <!--Alert Customer Table-->
+  <table id="" class="display" cellspacing="0" width="33%">
+      <thead>
+          <tr>
+              <th></th>
+              <th>Alert Customer</th>
+              <th></th>
+              <th></th>
+              <th></th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr data-child-value-1="10 camels" data-child-value-2="8 zebras">
+              <td class="details-control"></td>
+              <td>Threat Type</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="80 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>Outage Duration</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr data-child-value-1="12 camels" data-child-value-2="5 zebras">
+              <td class="details-control"></td>
+              <td>Estimated Repair Time</td>
+              <td></td>
+              <td></td>
+              <td></td>
+          </tr>
+      </tbody>
+      <tfoot>
+        <th colspan="5">
+          <form method="post">
+            <input type="button" value="Send Email" onclick="sendEmail()"/>
+          </form>
+        </th>
+      </tfoot>
+  </table>
+</div>
+
+
+</body>
+</html>
