@@ -1,0 +1,2380 @@
+
+<!--
+Copyright © Prof. Anurag Srivastava, Gowtham Kandaperumal, Linli Jia, and Dr. Sanjeev Pannala.
+No image or information should be reproduced, transmitted, or copied without the prior agreement with Prof. Srivastava.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <title>Real Time Resiliency Management Tool</title>
+   <meta name="description" content="">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   <!-- main CSS
+      ============================================ -->
+   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/radience.css') }}" />
+   <!-- <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}" /> -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" />
+   
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script>
+
+   <!-- For Charts -->
+   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment@2.24.0/min/moment.min.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.8.0"></script>
+
+   <!-- leaflet Links and scripts -->
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin="" />
+   <script type="text/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin="">
+      </script>
+
+      <!-- DataTables-->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">  
+   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/b-1.7.1/datatables.min.css"/>
+   <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/b-1.7.1/datatables.min.js"></script>
+   <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"/>
+   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css"/>
+
+   <!--real time alert tables-->
+   <script>
+      function format(value1, value2) {
+         return '<tr>'+
+            '<td># of camels: </td>' +
+            '<td>'+value1 +'</td>'+
+         '</tr>'+
+         '<tr>'+
+            '<td># of zebras: </td>'+
+            '<td>'+value2+'</td>'+
+         '</td>';
+      }
+      //alert operator table
+      $(document).ready(function () {
+         var table = $('#alertoperator').DataTable({
+            "paging": false,
+            "ordering": false,
+            "info": false
+         });
+
+         // Add event listener for opening and closing details
+         $('#alertoperator tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                  // This row is already open - close it
+                  row.child.hide();
+                  tr.removeClass('shown');
+            } else {
+                  // Open this row
+                  row.child(format(tr.data('child-value-1'), tr.data('child-value-2'))).show();
+                  tr.addClass('shown');
+            }
+         });
+      });
+
+      //alert field crew
+      $(document).ready(function () {
+         var table = $('#fieldcrew').DataTable({
+            "paging": false,
+            "ordering": false,
+            "info": false
+         });
+
+         // Add event listener for opening and closing details
+         $('#fieldcrew tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                  // This row is already open - close it
+                  row.child.hide();
+                  tr.removeClass('shown');
+            } else {
+                  // Open this row
+                  row.child(format(tr.data('child-value-1'), tr.data('child-value-2'))).show();
+                  tr.addClass('shown');
+            }
+         });
+      });
+
+      //alert customer
+      $(document).ready(function () {
+         var table = $('#alertcustomer').DataTable({
+            "paging": false,
+            "ordering": false,
+            "info": false
+         });
+
+         // Add event listener for opening and closing details
+         $('#alertcustomer tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                  // This row is already open - close it
+                  row.child.hide();
+                  tr.removeClass('shown');
+            } else {
+                  // Open this row
+                  row.child(format(tr.data('child-value-1'), tr.data('child-value-2'))).show();
+                  tr.addClass('shown');
+            }
+         });
+      });
+   </script>
+   <style>
+      @import url('//cdn.datatables.net/1.10.2/css/jquery.dataTables.css');
+      td.details-control {
+          background: url('http://www.datatables.net/examples/resources/details_open.png') no-repeat center center;
+          cursor: pointer;
+        }
+      tr.shown td.details-control {
+          background: url('http://www.datatables.net/examples/resources/details_close.png') no-repeat center center;
+        }
+      /*.dataTables_wrapper {
+          float: left;
+          width: 33%;
+          clear: none
+        }*/
+    </style>
+
+   <!--smtp email-->
+   <script type="text/javascript" src="https://smtpjs.com/v3/smtp.js"></script>
+   <script>
+   function sendEmail() {
+      Email.send({
+         Host: "smtp.gmail.com",
+         Username: "checkalert987@gmail.com",
+         Password: "Minion123",
+         To: "suhanishukla05@gmail.com",
+         From: "checkalert987@gmail.com",
+         Subject: "<email subject>",
+         Body: "<email body>",
+      })
+   .then(function(message){
+      alert("Mail Sent Successfully!")
+      });
+   }
+   </script>
+
+   <!--real time tab: style sms and email buttons-->
+   <style>
+      .realtimebutton {
+         text-align: center;
+      }
+      .sms {
+         background-color: #075053;
+         color: white; 
+         border-radius: 4px;
+      }
+      .email {
+         background-color:#075053;
+         color: white; 
+         border-radius: 4px;
+      }
+   </style>
+
+   <link rel="stylesheet" type="text/css" href="leaflet-openweathermap.css" />
+	<script type="text/javascript" src="leaflet-openweathermap.js"></script>
+
+
+   <!-- leaflet-heat -->
+   <script type="text/javascript"
+      src="{{ url_for('static', filename='js/Leaflet.heat-gh-pages/dist/leaflet-heat.js') }}"></script>
+</head>
+
+   <div class="container-fluid">
+      <div class="row tooltitle justify-content-center">
+          <h2 style=" color: white; font-weight: bolder; "> REAL-TIME RESILIENCY MANAGEMENT SYSTEM (CEC ALASKA)</h2>
+      </div>
+  </div>
+
+   <!-- Modal -->
+   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title text-center" id="exampleModalLabel">WARNING</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="alert alert-danger" role="alert">
+               <div class="modal-body text-center">
+                  A threat has been detected. Check under Resiliency Monitoring And Decision Support.
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+
+   <!-- Virtual Assistance-->
+   <!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h5 class="modal-title" id="exampleModalLabel">Virtual Assistant</h5>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+       <div class="modal-body">
+         <div class="input-group">
+            <textarea id="virtualText" class="form-control" aria-label="With textarea" placeholder="Enter your query here"></textarea>
+         </div>
+         <div id="virtualResult" style="text-align: center;">Results will appear here</div>
+         <div class="table-responsive"> 
+            <table id="virtualTable" class="table table-bordered"> 
+              <thead id="tablehead"> 
+              </thead> 
+              <tbody id="tablebody"> 
+              </tbody> 
+            </table> 
+          </div> 
+       </div>
+       <div class="modal-footer">
+         <button id="virtualSubmit" type="button" class="btn btn-primary">Submit</button>
+         <button id="virtualClose" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+         <button id="virtualNext" type="button" class="btn btn-primary">Next Question</button>
+       </div>
+     </div>
+   </div>
+ </div>
+
+
+
+   <!-- mg-tb-40 -->
+   <!-- <div class="Menu_top"> -->
+      <div class="container-fluid p-0">
+         <!-- <div class="row"> -->
+            <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> -->
+               <!-- Main Buttons -->
+               <ul class="mainnavbar nav nav-tabs nav-fill ">
+                  <li class="nav-item "><a class="nav-link active" data-toggle="tab" href="#system-info">System Information</a></li>
+                  <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#Real-Time">Resiliency Monitoring</a></li>
+                  <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#decision">Decision Support</a></li>
+                  <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#planning">Real-Time Alert and Monitoring of Service Area</a>
+                  </li>
+               </ul>
+
+               <div class="tab-content custom-menu-content">
+                  <!-- System Info Buttons -->
+                  <div id="system-info" class="tab-pane active">
+                        <!-- <div class="container-fluid"> -->
+                           <ul class="mainnavbar nav nav-tabs">
+                              <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#infra">Infrastructure</a></li>
+                              <li class="nav-item"><a class="nav-link  " data-toggle="tab" href="#netdetails">Network Details</a></li>
+                              <li class="nav-item"><a class="nav-link  " data-toggle="tab" href="#generatingunits">Generating Units</a></li>
+                              <li class="nav-item"><a class="nav-link  " data-toggle="tab" href="#loads">Loads</a></li>
+                              <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#resourceinfo">Resource Information</a></li>
+                           </ul>
+                           <!-- Display in each tab -->
+                           <div class="tab-content">
+                              <div id="infra" class="tab-pane active">
+                                 <div class="container-fluid" style="margin-top: 20px;">
+                                    <div class="row">
+                                       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                          <h3 style="text-align: center;">System Information</h3>
+                                          <div class="card2">
+                                             <table class="table table-borderless">
+                                                <tbody>
+                                                   <tr>
+                                                      <td>Number of Micro-PMUs</td>
+                                                      <td id="pmu">Fetching..</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Number of isolators</td>
+                                                      <td id="iso">Fetching..</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Number of substations</td>
+                                                      <td id="sub">Fetching..</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Number of smart meters</td>
+                                                      <td id="smart">Fetching..</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Total number of feeders</td>
+                                                      <td id="feeder">Fetching..</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Total number of oil switches</td>
+                                                      <td id="oil">Fetching..</td>
+                                                   </tr>
+                                                </tbody>
+                                             </table>
+                                          </div>
+                                       </div>
+                                       <!-- <div class="row"> -->
+                                       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                          <h3 style="text-align: center;">Update System Information</h3>
+                                          <div class="card">
+                                             <form action = "http://localhost:5000/systeminfo" method = "POST" 
+                                             enctype = "multipart/form-data">
+                                                <div class="form-group">
+                                                   {% for message in get_flashed_messages() %}
+                                                   {% endfor %}
+                                                   <label for="networktopology">Upload File (Supported Format: csv)</label>
+                                                   <input type="file" accept=".csv" name="file" class="form-control-file" id="systeminfo"></br>
+                                                   <input type="submit" id="systeminfoUpload" disabled/>
+                                                </div>
+                                             </form>
+                                          </div>
+                                       </div>
+                                       <!-- </div> -->
+                                    </div>
+                                 </div>
+                              </div>
+
+                              <!-- Network Tab -->
+                              <div id="netdetails" class="tab-pane fade">
+                                 <div class="container-fluid" style="margin-top: 20px; ">
+                                    <!-- CB Details Table-->
+                                    <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                       <!-- <div class="row"> -->
+                                          <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> -->
+                                             <h3 style="text-align: center;">CB Details</h3>
+                                             <div class="card2">
+                                                <table id="cbdetails" class="table table-sm display compact" style="width:100%">
+                                                   <thead class="thead-light">
+                                                      <tr>
+                                                         <th class="th-sm">CB ID</th>
+                                                         <th class="th-sm">Location</th>
+                                                         <th class="th-sm">Status</th>
+                                                      </tr>
+                                                   </thead>
+                                                   <tbody>
+                                                      
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          <!-- </div> -->
+                                          <!-- </div> -->
+
+                                          <!-- Node Connection Table -->
+                                          <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> -->
+                                             <!-- <div class="row"> -->
+                                             <h3 style="text-align: center;">Substation Details</h3>
+                                             <div class="card2">
+                                                <table id="subtable" class="table table-sm display compact" style="width:100%"> 
+                                                   <thead class="thead-light">
+                                                      <tr>
+                                                         <th>Sub. ID</th>
+                                                         <th>Location</th>
+                                                         <th>Outgoing Feeders</th>
+                                                         <th>Remarks</th>
+                                                      </tr>
+                                                   </thead>
+                                                   <tbody>
+                                                      <tr>
+                                                         <td>Sub1</td>
+                                                         <td>ORCA</td>
+                                                         <td>AUX Cannery</td>
+                                                         <td></td>
+                                                      </tr>
+                                                      <tr>
+                                                         <td>Sub2</td>
+                                                         <td>EYAK</td>
+                                                         <td>Main Town</td>
+                                                         <td></td>
+                                                      </tr>
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          <!-- </div> -->
+                                       <!-- </div> -->
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                       <!-- Transformer Details -->
+                                       <!-- <div class="row"> -->
+                                          <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> -->
+                                             <!-- <div class="row"> -->
+                                             <h3 style="text-align: center;">Transformer Details</h3>
+                                             <div class="card2">
+                                                <table id="transformerTable" class="table table-sm display compact" style="width:100%">
+                                                   <thead class="thead-light">
+                                                      <th>T. ID</th>
+                                                      <th>Rating</th>
+                                                      <th>Location</th>
+                                                      <th>Operating Conditions</th>
+                                                   </thead>
+                                                   <tbody>
+                                                      
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          <!-- </div> -->
+                                       <!-- </div> -->
+                                       <!-- Update File -->
+                                       <!-- <div class="row"> -->
+                                          <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> -->
+                                             <h3 style="text-align: center;">Update Information</h3>
+                                             <div class="card" style="height: 280px;">
+                                                <form action = "http://localhost:5000/cbdetails" method = "POST" 
+                                             enctype = "multipart/form-data">
+                                                   <div class="form-group">
+                                                      <!-- <label for="networktopology">Upload CB Details (Supported
+                                                         Format:
+                                                         xlsx)</label>
+                                                      <input type="file" class="form-control-file" id="networktopology"> -->
+
+                                                      {% for message in get_flashed_messages() %}
+                                                      {% endfor %}
+                                                      <label for="networktopology">Upload CB Details (Supported Format: csv)</label>
+                                                      <input type="file" accept=".csv" name="file" class="form-control-file" id="cbdetailsinput"></br>
+                                                      <input type="submit" id="cbdetailsUpload" disabled/>
+                                                   </div>
+                                                </form>
+
+                                                <form action = "http://localhost:5000/transdetails" method = "POST" 
+                                             enctype = "multipart/form-data">
+                                                   <div class="form-group">
+
+                                                      {% for message in get_flashed_messages() %}
+                                                      {% endfor %}
+                                                      <label for="networktopology">Upload Transformer Details (Supported Format: csv)</label>
+                                                      <input type="file" accept=".csv" name="file" class="form-control-file" id="transformerdetails"></br>
+                                                      <input type="submit" id="transformerUpload" disabled/>
+                                                   </div>
+                                                </form>
+                                                
+                                             </div>
+                                          <!-- </div> -->
+                                       <!-- </div> -->
+                                    </div>
+                                    <!-- </div> -->
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                       <h3 style="text-align: center;">Nodes Map</h3>
+                                       <div class="card2">
+                                          <div id="nodes_map"></div>
+                                       </div>
+                                    </div>
+                                    </div>
+                                 </div>
+                              </div>
+
+                              <!-- Generating Units Tab -->
+                              <div id="generatingunits" class="tab-pane fade">
+                                 <div class="container-fluid">
+                                    <div class=" row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                       <h3 style="text-align: center; padding-top: 15px;">Generating Units</h3>
+                                       <div class="card2">
+
+                                          <!-- <h3 style=" text-align: center;">Node Connection</h3> -->
+                                          <table id="gutable" class="table table-bordered table-sm" style="width: 100%;">
+                                             <thead class="thead-light">
+                                                <tr>
+                                                   <th>Generator</th>
+                                                   <th>KV</th>
+                                                   <th>Unit ID</th>
+                                                   <th>Status</th>
+                                                   <th>Control</th>
+                                                   <th>MW Measured</th>
+                                                   <th>Rating</th>
+                                                </tr>
+                                             </thead>
+                                             <tbody>
+                                             </tbody>
+                                          </table>
+                                       </div>
+                                       <h3 style="text-align: center;">Update Generating Units</h3>
+                                       <div class="card">
+                                          <form action = "http://localhost:5000/gudetails" method = "POST" 
+                                             enctype = "multipart/form-data">
+                                             <div class="form-group">
+                                                {% for message in get_flashed_messages() %}
+                                                      {% endfor %}
+                                                      <label for="networktopology">Upload File (Supported Format: csv)</label>
+                                                      <input type="file" accept=".csv" name="file" class="form-control-file" id="gudetails"></br>
+                                                      <input type="submit" id="gudetailsUpload" disabled/>
+                                             </div>
+
+                                          </form>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                       <h3 style="text-align: center; padding-top: 15px;">Generating Units Map</h3>
+                                       <div class="card2">
+                                          <div id="generating_units_map"></div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              </div>
+
+                              <!-- Loads Tab -->
+                              <div id="loads" class="tab-pane fade">
+                                 <div class="container-fluid">
+                                    <div class="row">
+                                    <div class=" col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <h3 style="text-align: center; padding-top: 15px;">Feeder Loads</h3>
+                                    <div class="card2">
+                                       <table id="loadstable" class="table table-bordered table-sm" style="width: 100%;">
+                                          <thead class="thead-light">
+                                             <tr>
+                                                <th>Load Id</th>
+                                                <th>Unit Id</th>
+                                                <th>Feeder Id</th>
+                                                <th>Load Status</th>
+                                                <th>Priority Type</th>
+                                                <th>KW Rated</th>
+                                                <th>KW Measured</th>
+                                             </tr>
+                                          </thead>
+                                          <tbody>
+                                          </tbody>
+                                       </table>
+                                    </div>
+                                    <h3 style="text-align: center;">Update Feeder Loads</h3>
+                                    <div class="card">
+                                       <form action = "http://localhost:5000/loaddetails" method = "POST" 
+                                                enctype = "multipart/form-data">
+                                          <div class="form-group">
+                                             {% for message in get_flashed_messages() %}
+                                             {% endfor %}
+                                             <label for="networktopology">Upload File (Supported Format: csv)</label>
+                                             <input type="file" accept=".csv" name="file" class="form-control-file" id="loadsdetails"></br>
+                                             <input type="submit" id="loadsdetailsUpload" disabled/>
+                                          </div>
+
+                                       </form>
+                                    </div>
+                                 </div>
+
+                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <h3 style="text-align: center; padding-top: 15px;">Feeder Loads Map</h3>
+                                    <div class="card2">
+                                       <div id="loads_map"></div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                              </div>
+
+                              <!-- Resource Information -->
+                              <div id="resourceinfo" class="tab-pane">
+                                 <ul class="nav nav-pills">
+                                    <li class="nav-item active"><a class="nav-link" data-toggle="tab" href="#threat-and-power">Threat Preparedness and Energy Resource</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#restore-recovery">Restoration and Cyber Infrastructure</a></li>
+                                 </ul>
+                                 <div class="tab-content">
+                                    <div id="threat-and-power" class="tab-pane fade">
+                                       <div class="container-fluid">
+                                          <div class="row">
+                                             <div class="col">
+                                                <h3 style="text-align: center;">Threat Preparedness and Impact</h3>
+                                                
+                                                <div class="card2" style="padding: 10px;">
+                                                   <form>
+                                                      <div class="form-group row">
+                                                         <label for="exampleInputEmail1" class="col col-form-label">Type of threat</label>
+                                                         <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                          <label class="form-check-label" for="inlineRadio1">Earthquake</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                          <label class="form-check-label" for="inlineRadio2">Volcano</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">Avalanche</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">Tsunami</label>
+                                                       </div>
+                                                       </div>
+
+                                                      <div class="form-group row">
+                                                        <label for="exampleInputEmail1" class="col col-form-label">Status of system threats identification</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                      </div>
+            
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Impact of threat analyzed and documented?						
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter number between 0-10">
+                                                         </div>
+                                                      </div>
+            
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Is emergency response curated for each threat?												
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+            
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Average warning time before threat							
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Minutes">
+                                                         </div>
+                                                      </div>
+            
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Expected accuracy of warning for each threat																		
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+            
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Status of utility preparedness drill for threats																		
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+            
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Anticipated maximum hours of outage for threats								
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Minutes">
+                                                         </div>
+                                                      </div>
+            
+            
+            
+                                                      <button type="submit" class="btn btn-primary">Submit</button>
+                                                   </form>
+                                                </div>
+                                             </div>
+                                             <div class="col">
+                                                <h3 style="text-align: center;">Energy Resource Flexibility</h3>
+                                                
+                                                <div class="card2" style="padding: 10px;">
+                                                   <form>
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Percentage of high priority critical loads that have local backup generation
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Percentage of medium priority critical loads that have local backup generation							
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+            
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Fault prevention plan (restoration plan, vegetation management) in place? 						
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+            
+
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Has vegetation management performed in the last year?
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Expected average blackstart restoration time							
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Expected average downtime of each generator due to threat		
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+
+                                                      <div class="form-group row">
+                                                         <label for="inputPassword" class="col col-form-label">Expected average runtime of backup generation								
+                                                         </label>
+                                                         <div class="col">
+                                                           <input type="text" class="form-control" id="inputPassword" placeholder="Enter Percentage">
+                                                         </div>
+                                                      </div>
+            
+
+                                                      <div class="form-group row">
+                                                         <label for="exampleInputEmail1" class="col col-form-label">Status of threat identification							
+						
+                                                         </label>
+                                                         <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions1" id="inlineRadio1" value="option1">
+                                                          <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions1" id="inlineRadio2" value="option2">
+                                                          <label class="form-check-label" for="inlineRadio2">No</label>
+                                                        </div>
+                                                       </div>
+            
+                                                       <div class="form-group row">
+                                                         <label for="exampleInputEmail1" class="col col-form-label">Status of asset inventory availablity
+                                                         </label>
+                                                         <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions2" id="inlineRadio1" value="option1">
+                                                          <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions2" id="inlineRadio2" value="option2">
+                                                          <label class="form-check-label" for="inlineRadio2">No</label>
+                                                        </div>
+                                                       </div>
+            
+                                                       <div class="form-group row">
+                                                         <label for="exampleInputEmail1" class="col col-form-label">Status of routine inspection plan availability for system assets													
+                                                         </label>
+                                                         <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio1" value="option1">
+                                                          <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                          <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio2" value="option2">
+                                                          <label class="form-check-label" for="inlineRadio2">No</label>
+                                                        </div>
+                                                       </div>
+            
+            
+                                                       
+            
+                                                      <button type="submit" class="btn btn-primary">Submit</button>
+                                                   </form>
+                                                </div>
+                                             </div>
+                                          </div>
+            
+                                          
+                                       </div>
+                                    </div>
+      
+                                    <div id="restore-recovery" class="tab-pane fade">
+                                       <div class="container-fluid">
+                                          <div class="row">
+                                             <div class="col">
+                                                <h3 style="text-align: center;">Restoration and Recovery</h3>
+                                                
+                                                <div class="card2" style="padding: 10px;">
+                                                   <form>
+                                                   <div class="form-group row">
+                                                      <label for="inputPassword" class="col col-form-label">
+                                                         Energy storage installed
+                                                      </label>
+                                                      <div class="col">
+                                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter KW">								
+                                                      </div>
+                                                   
+                                                   </div>
+                                                   
+                                                   <div class="form-group row">
+                                                      <label for="inputPassword" class="col col-form-label">
+                                                         Is repair teams on standby to be deployed									
+                                                      </label>
+                                                      <div class="col">
+                                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter number between 0-10">								
+                                                      </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                      <label for="exampleInputEmail1" class="col col-form-label">Automatic restoration plan in place</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Has a restoration plan drill conducted in the last year?</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Cross training of crew for handling all multiple equipment repairs</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Staging site selected for triage, storm trailers, mobile resoration </label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">PPE and tools for restoration crew</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Does fuel storage have polishers installed?</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Mutual assistance program with neighboring cooperatives</label>
+                                                       <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                        <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                      </div>
+                                                      <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                        <label class="form-check-label" for="inlineRadio2">No</label>
+                                                      </div>
+                                                   </div>
+                                                   <button type="submit" class="btn btn-primary">Submit</button>
+                                                </form>
+                                                </div>
+                                             </div>
+      
+                                             <div class="col">
+                                                <h3 style="text-align: center;">Cyber and Communication</h3>
+                                                
+                                                <div class="card2" style="padding: 10px;">
+                                                   <form>
+                                                   <div class="form-group row">
+                                                      <label for="inputPassword" class="col col-form-label">
+                                                         Average time for cyber blackstart
+                                                      </label>
+                                                      <div class="col">
+                                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter Minutes">								
+                                                      </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                      <label for="exampleInputEmail1" class="col col-form-label">Backup communication installed?</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Access to communication tp crew and state agencies?</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Backup of all electronic data in case of loss of internet</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Cyber threats identified?</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">CEF staff undergone cybersecurity best practices training</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Access control review</label>
+                                                        <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check form-check-inline">
+                                                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                         <label class="form-check-label" for="inlineRadio2">No</label>
+                                                       </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                       <label for="exampleInputEmail1" class="col col-form-label">Employee password authentication									
+                                                      </label>
+                                                       <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                        <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                      </div>
+                                                      <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                        <label class="form-check-label" for="inlineRadio2">No</label>
+                                                      </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                      <label for="exampleInputEmail1" class="col col-form-label">Virtual private network credential review
+                                                     </label>
+                                                      <div class="form-check form-check-inline">
+                                                       <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                       <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                     </div>
+                                                     <div class="form-check form-check-inline">
+                                                       <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                       <label class="form-check-label" for="inlineRadio2">No</label>
+                                                     </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                   <label for="exampleInputEmail1" class="col col-form-label">Static IP configuration for CEC servers and network connected equipment			
+                                                  </label>
+                                                   <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                    <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                  </div>
+                                                  <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                    <label class="form-check-label" for="inlineRadio2">No</label>
+                                                  </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                <label for="exampleInputEmail1" class="col col-form-label">Third party access control																		
+                                               </label>
+                                                <div class="form-check form-check-inline">
+                                                 <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                 <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                               </div>
+                                               <div class="form-check form-check-inline">
+                                                 <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                 <label class="form-check-label" for="inlineRadio2">No</label>
+                                               </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                             <label for="exampleInputEmail1" class="col col-form-label">Critical cyber assets identified																		
+                                            </label>
+                                             <div class="form-check form-check-inline">
+                                              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                              <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                              <label class="form-check-label" for="inlineRadio2">No</label>
+                                            </div>
+                                                   </div>
+      
+      
+                                                   <div class="form-group row">
+                                                      <label for="exampleInputEmail1" class="col col-form-label">Multi-user clearence for critical cyber assets																		
+                                                   </label>
+                                                      <div class="form-check form-check-inline">
+                                                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                      <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                   </div>
+                                                   <div class="form-check form-check-inline">
+                                                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                      <label class="form-check-label" for="inlineRadio2">No</label>
+                                                   </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                                   <label for="exampleInputEmail1" class="col col-form-label">Firewall audit performed in the last week																											
+                                                </label>
+                                                   <div class="form-check form-check-inline">
+                                                   <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                   <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                   <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                   <label class="form-check-label" for="inlineRadio2">No</label>
+                                                </div>
+                                                   </div>
+                  
+                                                   <div class="form-group row">
+                                                <label for="exampleInputEmail1" class="col col-form-label">Digital asset inventory</label>
+                                                <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                                <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                             </div>
+                                             <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                <label class="form-check-label" for="inlineRadio2">No</label>
+                                             </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                                 <label for="exampleInputEmail1" class="col col-form-label">Anti-virus installed																							
+                                </label>
+                                 <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                                  <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                  <label class="form-check-label" for="inlineRadio2">No</label>
+                                </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                              <label for="exampleInputEmail1" class="col col-form-label">Content management system installed	
+                             </label>
+                              <div class="form-check form-check-inline">
+                               <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                               <label class="form-check-label" for="inlineRadio1">Yes</label>
+                             </div>
+                             <div class="form-check form-check-inline">
+                               <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                               <label class="form-check-label" for="inlineRadio2">No</label>
+                             </div>
+                                                   </div>
+      
+                                                   <div class="form-group row">
+                           <label for="exampleInputEmail1" class="col col-form-label">IP rules 									
+                          </label>
+                           <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                            <label class="form-check-label" for="inlineRadio1">Yes</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                            <label class="form-check-label" for="inlineRadio2">No</label>
+                          </div>
+                                                   </div>
+                                                   
+                                                   <button type="submit" class="btn btn-primary">Submit</button>
+                                                   </form>
+
+                                                </div>
+                                             </div>
+                                          </div>
+
+                                       </div>
+
+                                    </div>
+                                    
+                                 </div>
+                              </div>
+
+                           </div>
+                        </div>
+
+
+                  <!-- Resiliency Monitoring Buttons -->
+                  <div id="Real-Time" class="tab-pane">
+                     <ul class="mainnavbar nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#runtimescore">Real-time Resiliency</a></li>
+                        <li class="nav-item"><a class="nav-link  " data-toggle="tab" href="#threatimpact2">Threat and Impact</a></li>
+                        <li class="nav-item"><a class="nav-link  " data-toggle="tab" href="#history">Resiliency History</a></li>
+                     </ul>
+                     <div class="tab-content">
+                        <!-- runtime Score -->
+                        <div id="runtimescore" class="tab-pane active">
+                           <div class="container-fluid">
+                              <div class="row">
+                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                 
+                                    <h3 style="text-align: center; padding-top: 10px;">Resiliency Metric</h3>
+                                          <div class="card">
+                                             <canvas id="myChart" height="100%"></canvas>
+                                          </div>
+                                          <div class="card" style="margin-top: 10px;">
+                                             <div class="card-header">
+                                                <ul class="nav nav-tabs card-header-tabs" id="bologna-list">
+                                                  <li class="nav-item">
+                                                    <a class="nav-link active" href="#withstand">Withstand Metric</a>
+                                                  </li>
+                                                  <li class="nav-item">
+                                                    <a class="nav-link" href="#anticipate" role="tab">Anticipate Metric</a>
+                                                  </li>
+                                                  <li class="nav-item">
+                                                    <a class="nav-link" href="#recovery" role="tab">Recover Metric</a>
+                                                  </li>
+                                                </ul>
+                                              </div>
+
+                                              <div class="card-body">
+                                                <div class="tab-content">
+                                                   <!-- runtime Score -->
+                                                      <div id="withstand" class="tab-pane active"  role="tabpanel">
+                                                         <canvas id="myChart2" height="70px"></canvas>
+                                                      </div>
+
+                                                      <div id="anticipate" class="tab-pane" role="tabpanel">
+                                                         <!-- <canvas id="myChart2" height="100%" ></canvas> -->
+                                                         <canvas id="anticipate-chart" height="70px"></canvas>
+                                                      </div>
+
+                                                      <div id="recovery" class="tab-pane" role="tabpanel">
+                                                         <!-- <canvas id="myChart2" height="100%" ></canvas> -->
+                                                         <!-- <p class="card-text">Coming soon </p> -->
+                                                         <canvas id="recovery-chart" height="70px"></canvas>
+                                                      </div>
+                                                   </div>
+                                             </div>
+                                          </div>
+                                       
+                                 </div>
+
+                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    
+                                       <h3 style="text-align: center; padding-top: 10px;">Live Map and Weather</h3>
+                                       <div class="card2" style="align-content: center;">
+                                          
+                                             <div class="center">
+                                                <a href="https://www.weatherwx.com/forecast/ak/cordova.html" target="_blank"><img src="https://www.weatherwx.com/forecast.php?forecast=hourly&pands=cordova+ak&config=png&alt=hwicbb" border="0" alt="Click for the latest Cordova weather forecast."></a>
+                                             </div>
+                                       </div>
+                                       
+                                       <div class="card2" style="margin-top: 10px;" >
+                                          <div id="mapid" height="100%"></div>
+                                       </div>
+
+                                       <div> 
+                                          <button type="button" class="btn btn-info btn-lg btn-block" data-toggle="modal" data-target="#myModal" style="margin-top: 5px;">Ask Virtual Assistant</button>
+                                       </div>
+
+                                 
+
+                                    <!-- </div> -->
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <!-- Threat and impact tab -->
+                        <div id="threatimpact2" class="tab-pane fade">
+                           <div class="container-fluid">
+                              <div class="row">
+                              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                 <!-- <div class="row"> -->
+                                    <h3 style="text-align: center; padding-top: 15px;">Threat Information</h3>
+                                    <div class="card2">
+                                       <table class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Threat Property</th>
+                                                <th scope="col">Threat Nature</th>
+                                             </tr>
+                                          </thead>
+                                          <tbody>
+                                          <tr>
+                                             <td> Threat detected </td>
+                                             <td>
+                                                Avalanche (Loss of feeder loads)
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td>Intensity</td>
+                                             <td>Level 1</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Wind direction</td>
+                                             <td>NE</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Wind speed</td>
+                                             <td>7 Mph</td>
+                                          </tr>
+                                       </tbody>
+                                       </table>
+                                    <!-- </div> -->
+                                 </div>
+                                 <!-- <div class="row"> -->
+                                    <!-- <h3 style="text-align: center">Impacts</h3>
+                                    <div class="card2">
+                                       <table class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Impact Property</th>
+                                                <th scope="col">Value</th>
+                                             </tr>
+                                          </thead>
+                                          <tbody>
+                                             <tr>
+                                                <td>Voltage</td>
+                                                <td>7kV</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Frequency</td>
+                                                <td>60Hz</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Scheduled load</td>
+                                                <td>85MW</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Scheduled generation</td>
+                                                <td>95MW</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Present load</td>
+                                                <td>90MW</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Present generation</td>
+                                                <td>90MW</td>
+                                             </tr>
+                                             <!-- <tr>
+                                                <td>Generation</td>
+                                                <td>HBC</td>
+                                                <td>1.0MW</td>
+                                                <td>0.5MW</td>
+                                             </tr>
+                                             <tr>
+                                                <td>CB47</td>
+                                                <td>Creek</td>
+                                                <td>Closed</td>
+                                                <td>Open</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Total Generation</td>
+                                                <td></td>
+                                                <td>5MW</td>
+                                                <td>4.5MW</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Total Load</td>
+                                                <td></td>
+                                                <td>3.5MW</td>
+                                                <td>3MW</td>
+                                             </tr> -->
+                                          <!-- </tbody> -->
+                                       <!-- </table> -->
+                                    <!-- </div> --> 
+
+                                    <h3 style="text-align: center; ">Impact Summary</h3>
+                                    <div class="card2">
+                                       <table id="impactsummarytable" class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Property</th>
+                                                <th scope="col">Value</th>
+                                             </tr>
+                                          </thead>
+                                          <tbody>
+                                          <tr>
+                                             <td> Fault location </td>
+                                             <td> ORCA </td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Total load lost</td>
+                                             <td>500 kW</td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Total critical load lost</td>
+                                             <td>100 kW</td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Loss of generators</td>
+                                             <td>Gen1 at PC</td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Lost generators IDs</td>
+                                             <td>101</td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Available generator list</td>
+                                             <td>ORCA, HBC and Power Creek</td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Loss of feeders</td>
+                                             <td>Lake Avenue</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Feeders IDs</td>
+                                             <td>L01-L18</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Oil switches</td>
+                                             <td>054, 644, 193, 247, 195, 038</td>
+                                          </tr>
+                                       </tbody>
+                                       </table>
+                                    </div>
+
+                                 </div>
+                              
+                              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                 <!-- <div class="row"> -->
+                                 <h3 style="text-align: center; padding-top: 15px;">Live Map Tracking</h3>
+                                 <div class="card2">
+                                    <div id="mapid2"></div>
+                                 </div>
+                                 <!-- </div> -->
+                              <!-- </div> -->
+                           </div>
+                        </div>
+                     </div>
+                     </div>
+                        <!-- Resiliency History -->
+                        <div id="history" class="tab-pane fade">
+                           <div class="container-fluid" style="margin-top: 20px;">
+                              <div class="row">
+                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <h3 style="text-align: center; padding-top: 15px;">Resiliency History</h3>
+                                    <div id="res-history" class="card2 scrollable">
+                                       <table class="table table-sm table-bordered" id="resiliency-history">
+                                          <thead class="thead-light">
+                                             <tr>
+                                                <th scope="col">Time</th>
+                                                <th scope="col">TF</th>
+                                                <th scope="col">GF</th>
+                                                <th scope="col">TIF</th>
+                                                <th scope="col">CLD</th>
+                                                <th scope="col">CLNL</th>
+                                                <th scope="col">Resiliency Score</th>
+                                             </tr>
+                                          </thead>
+
+                                          <tbody>
+                                             <tr>
+                                                <td>00-00-0000 00:00</td>
+                                                <td>0.0</td>
+                                                <td>0.0</td>
+                                                <td>0.0</td>
+                                                <td>0.0</td>
+                                                <td>0.0</td>
+                                                <td>0.0</td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                       <!-- insert Bar graphs   -->
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <!-- Decision Buttons -->
+                  <div id="decision" class="tab-pane">
+                     <ul class="mainnavbar nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#decision-pre">Pre-Event</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#decision-during">During Event</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#decision-post">Post-Event</a></li>
+                     </ul>
+                     <div class="tab-content">
+                        
+                        <!-- Decision Pre-event -->
+                        <div id="decision-pre" class="tab-pane active">
+                           <div class="container-fluid">
+                              <div class="row">
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    <!-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
+                                       <h3 style="text-align: center; ">Expected Event Details</h3>
+                                       <div class="card2">
+                                          <table id="expectedeventdetailstable" class="table table-bordered table-sm">
+                                             <thead>
+                                                <tr>
+                                                   <th scope="col">Property</th>
+                                                   <th scope="col">Value</th>
+                                                </tr>
+                                             </thead>
+                                             <tbody>
+                                             <tr>
+                                                <td>Event type</td>
+                                                <td>Tsunami</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Expected time to hit</td>
+                                                <td>3.5 hrs</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Duration of event</td>
+                                                <td>1 hr</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Temperature</td>
+                                                <td>52 F</td>
+                                             </tr>
+                                    
+                                             <tr>
+                                                <td>Wind speed</td>
+                                                <td>12 m/s NW</td>
+                                             </tr>
+                                             
+                                             <tr>
+                                                <td>Humidity</td>
+                                                <td>64 %</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Precipitation</td>
+                                                <td>0.1 in</td>
+                                             </tr>
+                                          </tbody>
+                                          </table>
+                                       </div>
+                                    <!-- </div> -->
+      
+                                       <h3 style="text-align: center; ">Resiliency Metric with Proactive Control</h3>
+                                       <div class="card" style="height: 335px;">
+                                          <canvas id="decision-pre-barchart"></canvas>
+                                       </div>
+                                 </div>
+                                 
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+
+                                    <h3 style="text-align: center; ">Suggested Proactive Action</h3>
+                                    <div class="card2">
+                                       <table class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Stage</th>
+                                                <th scope="col">Suggested Action</th>
+                                             </tr>
+                                          </thead>
+
+                                          <tbody>
+                                          <tr>
+                                             <td>SCENARIO1</td>
+                                             <td>Limited corrective restoration after disaster strikes (Without proactive control)
+                                                <!-- -OPEN SW96 -->
+                                             </td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>SCENARIO2</td>
+                                             <td>Proactive reconfiguration</td>
+                                          </tr>
+                                       </tbody>
+                                       </table>
+                                    </div>
+
+                                    <h3 style="text-align: center; ">Expected Outage Summary</h3>
+                                    <div class="card2">
+                                       <table id="expectedoutagetable" class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Property</th>
+                                                <th scope="col">Value</th>
+                                             </tr>
+                                          </thead>
+                                          <tbody>
+                                          <tr>
+                                             <td> Fault location </td>
+                                             <td> ORCA </td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Total load lost</td>
+                                             <td>500 kW</td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Total critical load lost</td>
+                                             <td>100 kW</td>
+                                          </tr>
+
+                                          <!-- <tr>
+                                             <td>Loss of generators</td>
+                                             <td>Gen1 at PC</td>
+                                          </tr> -->
+
+                                          <tr>
+                                             <td>Generation loss</td>
+                                             <td>Generators G3, G4, G7 </td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Lost nodes</td>
+                                             <td>801,806,808,811,813,822,829,831</td>
+                                          </tr>
+
+                                          <!-- <tr>
+                                             <td>Lost generators IDs</td>
+                                             <td>101</td>
+                                          </tr> -->
+
+                                          <tr>
+                                             <td>Available generator list</td>
+                                             <td>ORCA, HBC and Power Creek</td>
+                                          </tr>
+
+                                          <tr>
+                                             <td>Feeder affected</td>
+                                             <td>New Town</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Feeder Load IDs</td>
+                                             <td>N01-N14</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Oil switches</td>
+                                             <td>099, 255, 266, 271, 279</td>
+                                          </tr>
+                                       </tbody>
+                                       </table>
+                                    </div>
+
+                                       <!-- <div class="card">
+                                          <canvas id="decision-pre-linechart"></canvas>
+                                       </div> -->
+
+                                       <!-- Available Reserve Table -->
+                                       <!-- <h3 style="text-align: center; ">Available Reserve</h3>
+                                       <div class="card2">
+                                          <table class="table table-bordered table-sm">
+                                             <thead>
+                                                <tr>
+                                                   <th scope="col">Reserve Type</th>
+                                                   <th scope="col">Available Amount</th>
+                                                </tr>
+                                             </thead>
+                                             <tbody>
+                                             <tr>
+                                                <td>Battery SOC</td>
+                                                <td>85%</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Available battery energy</td>
+                                                <td>500 kW</td>
+                                             </tr>
+                                             
+                                             <tr>
+                                                <td>Non-spinning reserve</td>
+                                                <td>5 Units at ORCA</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Available generation</td>
+                                                <td>1.0 MW</td>
+                                             </tr>
+                                          </tbody>
+                                          </table>
+                                       </div> -->
+                                 </div>
+
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    <h3 style="text-align: center; "> Live Tracking </h3>
+                                    <div class="card2" style="margin-bottom: 10px;">
+                                       <div id="decision-mapid"></div>
+                                    </div>
+
+                                    <!-- <div class="card">
+                                       <canvas id="decision-resilientmode-barchart"></canvas>
+                                    </div> -->
+
+                                    <!-- <h3 style="text-align: center; ">Inventory Available</h3>
+                                    <div class="card2" style="height: 210px;">
+                                       <table class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Inventory Name</th>
+                                                <th scope="col">Available Amount</th>
+                                             </tr>
+                                          </thead>
+                                          <tr>
+                                             <td>Number of crew</td>
+                                             <td>10</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Back up generators </td>
+                                             <td>5 Units at ORCA</td>
+                                          </tr>
+                                          
+                                          <tr>
+                                             <td>Spare transformers available</td>
+                                             <td>10</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Spare oil switches</td>
+                                             <td>2</td>
+                                          </tr>
+                                          <tr>
+                                             <td>Available fuel at ORCA</td>
+                                             <td>60 %</td>
+                                          </tr>
+                                       </table>
+                                    </div> -->
+
+                                 </div>
+
+                                 
+
+                              </div>
+                           </div>
+                        </div>
+                              
+                        
+                        <!-- Decision During -->
+                        <div id="decision-during" class="tab-pane fade">
+                           <div class="container-fluid">
+                              <div class="row">
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    
+                                    <h3 style="text-align: center;">Available Generation Resources</h3>
+                                    <div class="card2">
+                                       <table id="availablegenresources" class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Property</th>
+                                                <th scope="col">Value</th>
+                                             </tr>
+                                          </thead>
+                                          <tbody>
+                                             <tr>
+                                                <td>Storage Reserve</td>
+                                                <td>Yes</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Battery SoC</td>
+                                                <td>85%</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Available storage energy</td>
+                                                <td>400kWh</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Non-spinning reserve</td>
+                                                <td>1 Unit at ORCA</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Available generation resource</td>
+                                                <td>BESS</td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </div>
+
+                                    <h3 style="text-align: center;">Resiliency Score Chart</h3>
+                                    <div class="card" style="height: 500px;">
+                                       <canvas id="decision-during-linechart"></canvas>
+                                    </div>
+
+                                 </div>
+                                 
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    
+                                       <h3 style="text-align: center;">Present System Conditions</h3>
+                                       <div class="card2">
+                                          <table id="presentsysconditions" class="table table-bordered table-sm">
+                                             <thead>
+                                                <th scope="col">Property</th>
+                                                <th scope="col">Value</th>
+                                             </thead>
+                                             <tbody>
+                                             <tr>
+                                                <td>Total load</td>
+                                                <td>3.6 MW</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Total critical load</td>
+                                                <td>1.5 MW</td>
+                                             </tr>
+                                             
+                                             <tr>
+                                                <td>Present generation</td>
+                                                <td>3.7 MW</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Available generation</td>
+                                                <td>4.0 MW</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Voltage and frequency HBC</td>
+                                                <td>4.16kV, 59.95 Hz</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Voltage and frequency PC</td>
+                                                <td>4.16kV, 59.95Hz</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Voltage and frequency ORCA</td>
+                                                <td>4.16kV, 59.95Hz</td>
+                                             </tr>
+                                             
+                                             <tr>
+                                                <td>Voltage and frequency Eyak</td>
+                                                <td>4.16kV, 59.95Hz</td>
+                                             </tr>
+                                             
+                                          </table>
+                                       </tbody>
+                                       </div>
+                                       
+                                       <h3 style="text-align: center;">BESS SoC Curve</h3>
+                                       <div class="card" style="height: 500px;">
+                                       <canvas id="soccurve"></canvas>
+                                       </div>
+                                    
+                                 </div>
+
+                                 <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <h3 style="text-align: center; ">Impact On System</h3>
+                                       <div class="card2">
+                                          <table id="impactonsystem" class="table table-bordered table-sm">
+                                             <thead>
+                                                <tr>
+                                                   <th scope="col">Property</th>
+                                                   <th scope="col">Value</th>
+                                                </tr>
+                                             </thead>
+                                             <tbody>
+                                             <tr>
+                                                <td>Fault location</td>
+                                                <td>New Town, ORCA</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Total load lost </td>
+                                                <td>500 kW</td>
+                                             </tr>
+                                             
+                                             <tr>
+                                                <td>Total critical load lost</td>
+                                                <td>100 kW</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Loss of generators</td>
+                                                <td>G3, G4, G5, G6, G7, G8 at ORCA</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Lost generator IDs</td>
+                                                <td>303, 304, 305, 306, 307, 308</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Available generator list</td>
+                                                <td>HBC, Power Creek</td>
+                                             </tr>
+
+                                             <tr>
+                                                <td>Loss of feeders</td>
+                                                <td>New Town</td>
+                                             </tr>
+                                             
+                                             <tr>
+                                                <td>Feeder load IDs</td>
+                                                <td>N01 - N26</td>
+                                             </tr>
+                                             
+                                             <tr>
+                                                <td>Oil switches</td>
+                                                <td>099, 232, 255, 266, 271, 279, 458</td>
+                                             </tr>
+                                          </tbody>
+                                          </table>
+                                       </div>
+
+                                    <h3 style="text-align: center;"> Live Tracking </h3>
+                                       <div class="card2" style="margin-bottom: 10px;">
+                                          <div id="decision-during-mapid"></div>
+                                       </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <!-- Decision Post Event -->
+                        <div id="decision-post" class="tab-pane fade">
+                           <div class="container-fluid">
+                              <div class="row">
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    
+                                    <h3 style="text-align: center;">Selected Restoration Plan Summary</h3>
+                                    <div class="card2" style="height: 355px;">
+                                       <table id="restorationplan" class="table table-bordered table-sm">
+                                          <thead>
+                                             <tr>
+                                                <th scope="col">Property</th>
+                                                <th scope="col">Value</th>
+                                             </tr>
+                                          </thead>   
+                                          <tbody>
+                                          <!-- <tr>
+                                                <td>No. of switching actions</td>
+                                                <td>4</td>
+                                             </tr> -->
+                                             <tr>
+                                                <td>Restoring status of lost load</td>
+                                                <td>Partial</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Restored critical load</td>
+                                                <td>0.5MW (013, 256)</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Restored Non-critical load</td>
+                                                <td>1.0MW</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Available generating stations</td>
+                                                <td>ORCA, HBC</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Loss of feeder nodes(not restored)</td>
+                                                <td>Main Town, New Town</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Restored feeder IDs</td>
+                                                <td>M01-M11, N01-N24</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Oil switches (closing)</td>
+                                                <td>099,232,255,266,271,279,458,054,195,193,247,644 </td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </div>
+
+
+                                    <h3 style="text-align: center; margin-top: 15px;">Resiliency Score Chart</h3>
+                                    <div class="card" style="height: 315px;">
+                                       <canvas id="decision-post-chart"></canvas>
+                                    </div>
+                                 </div>
+                              
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    
+                                    <h3 style="text-align: center; ">Suggested Restoration Stages</h3>
+                                          <div class="card2">
+                                             <table class="table table-bordered table-sm">
+                                                <tr>
+                                                   <td>STAGE 1</td>
+                                                   <td>Close the New Town feeder breakers</td>
+                                                </tr>
+
+                                                <tr>
+                                                   <td>STAGE 2</td>
+                                                   <td> Close the Main Town feeder breakers</td>
+                                                </tr>
+
+                                                <tr>
+                                                   <td>STAGE 3</td>
+                                                   <td> Repair/replace damaged equipment</td>
+                                                </tr>
+                                             
+                                             </table>
+                                          </div>
+                                    
+                                    <h3 style="text-align: center;">Resource Management</h3>
+                                          <div class="card2">
+                                             <table class="table table-bordered table-sm">
+                                                   <tr>
+                                                      <td>Optimal routing of crew</td>
+                                                      <td>Yes</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Minimize battery discharge 
+                                                      </td>
+                                                      <td>Yes</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Available battery energy</td>
+                                                      <td>limited</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Activate back up generators at ORCA</td>
+                                                      <td>Yes</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Reconfiguring the network</td>
+                                                      <td>Yes</td>
+                                                   </tr>
+                                                   <tr>
+                                                      <td>Equipment requirement</td>
+                                                      <td>Yes</td>
+                                                   </tr>
+                                             </table>
+                                          </div>
+
+                                    <h3 style="text-align: center;">Recovery factors</h3>
+                                       <div class="card" style="height: 315px;">
+                                          <canvas id="posteventrecoverychart"></canvas>
+                                       </div>
+
+                                 </div>
+
+                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    <h3 style="text-align: center;"> Live Tracking </h3>
+                                       <div class="card2" style="margin-bottom: 10px;">
+                                          <div id="decision-post-mapid"></div>
+                                       </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                 <!-- Planning Button -->
+                  <div id="planning" class="tab-pane in notika-tab-menu-bg">
+                     <!--<ul class="nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#planning-pre">Pre-Event</a></li>-->
+                        <!-- <li><a data-toggle="tab" href="#planning-during">During Event</a></li> -->
+                        <!-- <li><a data-toggle="tab" href="#planning-post">Post-Event</a></li> -->
+                     <!--</ul>-->
+                     <div class="tab-content">
+                        <!-- Planning Pre-event -->
+                        <!--<div id="planning-pre" class="tab-pane active">-->
+                        <div class="container-fluid">
+                              <!-- <div class="row"> -->
+                           <div class="row">
+                              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                 <h3 style="text-align: center; padding-top: 15px;">Alert Operator</h3>
+                                 <div class="card2" style="height: 305px;">
+                                    <table id="alertoperator" class="realtime">
+                                       <thead>
+                                          <tr>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>System Information</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Outage Zone</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Customers Affected</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Damage Information</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+                                       </tbody>
+                                       <tfoot>
+                                          <tr>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                          </tr>
+                                       </tfoot>
+                                    </table>
+                                 </div>
+                              </div>
+                               
+                              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                 <h3 style="text-align: center; padding-top: 15px;">Alert Field Crew</h3>
+                                 <div class="card2" style="height: 305px;">
+                                    <table id="fieldcrew" class="realtime">
+                                       <thead>
+                                          <tr>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Outage Zone</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Customers Affected</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Damage Information</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Crew Routing</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+                                       </tbody>
+                                       <tfoot>
+                                          <tr>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                          </tr>
+                                       </tfoot>
+                                    </table>
+                                    <div class="realtimebutton">
+                                       <button class="sms"><a href="sms:+1-510-309-0802" style="color: white;">Send SMS</a></button>
+                                    </div>
+                                 </div>
+                              </div>
+
+                              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                 <h3 style="text-align: center; padding-top: 15px;">Alert Customer</h3>
+                                 <div class="card2" style="height: 305px;">
+                                    <table id="alertcustomer" class="realtime">
+                                       <thead>
+                                          <tr>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                             <th></th>
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Threat Type</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Outage Duration</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Est. Repair Time</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+
+                                          <tr data-child-value-1="4 camels" data-child-value-2="5 zebras">
+                                             <td class="details-control"></td>
+                                             <td>Crew Routing</td>
+                                             <td></td>
+                                             <td></td>
+                                             <td></td>
+                                          </tr>
+                                       </tbody>
+
+                                       <tfoot>
+                                          <tr>
+                                             <th colspan="5"></th>
+                                          </tr>
+                                       </tfoot>
+                                    </table>
+                                    <div class="realtimebutton">
+                                       <form method="post">
+                                          <input type="button" class="email" value="Send Email" onclick="sendEmail()"/>
+                                       </form>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>   
+
+                        <!-- Planning During -->
+                        <!--<div id="planning-during" class="tab-pane fade">
+                           <div class="container-fluid">
+                              <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                 <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                       <h3 style="text-align: center; padding-top: 15px;">Event Details
+                                       </h3>
+                                       <div style="background: #f9f9f9; ">
+                                          <table class="table table-bordered">
+                                             <tr>
+                                                <td> Event type </td>
+                                                <td>
+                                                   <div class="btn-group">
+                                                      <button type="button" class="btn btn-default dropdown-toggle"
+                                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                         Action <span class="caret"></span>
+                                                      </button>
+                                                      <ul class="dropdown-menu">
+                                                         <li><a href="#">Avalance</a></li>
+                                                         <li><a href="#">Tsunami</a></li>
+                                                         <li><a href="#">Tornado</a></li>-->
+                                                         <!-- <li role="separator" class="divider"></li>
+                                                            <li><a href="#">Separated link</a></li> -->
+                                                     <!-- </ul>
+                                                   </div>
+                                                </td>
+                                             </tr>
+                                             <tr>
+                                                <td>Coordinates</td>
+                                                <td>(0.000, 0.000)</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Wind Speed</td>
+                                                <td>12m/s</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Wind Direction</td>
+                                                <td>North-west</td>
+                                             </tr>
+
+                                          </table>
+                                       </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                       <h3 style="text-align: center; padding-top: 15px;">Expected Outage
+                                          and Summary
+                                       </h3>
+                                       <div style="background: #f9f9f9; ">
+                                          <table class="table table-bordered">
+                                             <tr>
+                                                <td> Fault Location </td>
+                                                <td> OSO47 </td>
+                                             </tr>
+                                             <tr>
+                                                <td>Isolated Section Details</td>
+                                                <td>HBC isolated Creek station)</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Wind Speed</td>
+                                                <td>12m/s</td>
+                                             </tr>
+                                             <tr>
+                                                <td>Wind Direction</td>
+                                                <td>North-west</td>
+                                             </tr>
+                                          </table>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                       <div style="background: #f9f9f9; ">
+                                          <canvas id="planning-during-barchart"></canvas>
+                                       </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                       <div style="background: #f9f9f9; ">
+                                          <canvas id="planning-during-linechart"></canvas>
+                                       </div>
+                                    </div>
+                                 </div>-->
+                                 <!-- </div> -->
+                              <!--</div>-->
+                              <!-- </div> -->
+                              <!-- <div class="row"> -->
+                              <!--<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">-->
+                                 <!-- insert Bar graphs   -->
+                                <!-- <h3 style="text-align: center; padding-top: 15px;"> Live Tracking </h3>
+                                 <div style="background: #f9f9f9; ">
+                                    <div id="planning-during-mapid"></div>
+                                 </div>
+                              </div>-->
+                              <!-- </div> -->
+                          <!-- </div>
+                        </div> -->
+
+                        <!-- Planning Post Event -->
+                       <!-- <div id="planning-post" class="tab-pane fade">
+                           <div class="container-fluid" style="margin-top: 20px; background: #f9f9f9;">
+                              <div class="row">
+                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
+                                    <!-- insert line chart   -->
+                                    <!--<p> Insert Line Chart </p>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">-->
+                                    <!-- insert Bar graphs   -->
+                                  <!--  <p> Insert Bar graphs </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+               </div>-->
+      
+   <!-- </div> -->
+         <!--</div>-->
+
+   <!-- main JS
+      ============================================ -->
+   
+   <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/Leaflet.heat-gh-pages/dist/leaflet-heat.js') }}"></script>
+   
+
+
+   <!-- <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> -->
+   <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+   <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/custommaps.js') }}"></script>
+   
+   <!-- System Information Javascript files -->
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/system-information/infrastructure.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/system-information/loads.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/system-information/generating-units.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/system-information/networks-details.js') }}"></script>
+   
+   <!-- Decision Support-->
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/decision-support/during-event.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/decision-support/pre-event.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/decision-support/post-event.js') }}"></script>
+   
+   <!-- planning-analysis-->
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/planning-analysis/pre-event.js') }}"></script>
+   
+   
+   <!--Live resiliency-->
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/resiliency-monitoring/runtime-resiliency.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/resiliency-monitoring/threat-impact.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/main-tool-js/resiliency-monitoring/resiliency-history.js') }}"></script>
+   
+   
+
+
+   <script type="text/javascript" src="{{ url_for('static', filename='js/data-map/d3.min.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/data-map/topojson.js') }}"></script>
+   <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+   <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+   
+   
+
+</body>
+<footer><font size="1"> Copyright &copy; Prof. Anurag Srivastava, Gowtham Kandaperumal, Linli Jia, and Dr. Sanjeev Pannala.<br>
+No image or information should be reproduced, transmitted, or copied without the prior agreement with Prof. Srivastava.</font></footer>
+</html>
