@@ -1,1 +1,32 @@
-
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <script>
+      var openModal = getElementById('openmodal'); 
+      var customerModal = getElementById('customermodal'); 
+      openModal.addEventListener('click', function onOpen() {
+         if (typeof customerModal === "function") {
+            customerModal.showDialog(); 
+         } else {
+            alert("<dialog> API not supported"); 
+         }
+      }); 
+    </script>
+    <dialog id="customermodal">
+      <form method="dialog">
+        <div class="form-group">
+          <label for="customermessage">Message for Customer</label>
+          <textarea class="form-control" id="customermessage" rows="5"></textarea>
+        </div>
+        <menu>
+          <button value="close">Close</button>
+          <button id="sendmessage" value="Send Email">Send Message</button>
+        </menu>
+      </form> 
+    </dialog>
+    <menu>
+      <button id="openmodal">Open Modal</button>
+    </menu>
+      <output aria-live="polite"></output>
+  </body>
+</html>
